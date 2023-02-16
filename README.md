@@ -43,7 +43,7 @@ Observability using Prometheus and Grafana.
      https://prometheus.io/docs/instrumenting/exporters/   
 
     https://github.com/prometheus   
-
+***  
 ### PromQL   
 
 PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada para montar query com as métricas que foram coletadas.    
