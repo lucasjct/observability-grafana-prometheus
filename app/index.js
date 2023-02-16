@@ -50,8 +50,8 @@ app.get('/', function(req,res){
 // create route
 app.get('/metrics', async function(req, res) {
 
-    res.set("Content-Type", client.register.contentType);
-    res.end(await client.register.metrics());
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
 });
 
 

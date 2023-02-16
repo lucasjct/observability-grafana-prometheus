@@ -4,7 +4,8 @@ Observability using Prometheus and Grafana.
 * Executar pela linha de comando para baixar e executar o Prometheus via Docker.  
 
 ```docker
- docker run --name prometheus --rm -d -p 9090:9090 prom/prometheus
+ docker run --name prometheus --rm -d -p 9090:9090 -v c:/Users/AS/workspace/observability-grafana-prometheus/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+
 ```  
 
 * Conferir se o container está sendo executado corretamente:    
