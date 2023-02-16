@@ -14,17 +14,37 @@ const counter = new promClient.Counter({
 });
 
 const gauge = new promClient.Gauge({ 
-    name: 'metric_name', 
-    help: 'metric_help' 
+    name: 'aula_free_bytes', 
+    help: 'exemplo de gauge' 
 });
 
-// A cada vez que a página for chamada, as metricas do promethes
-// também será executadas.
+const histogram = new promClient.Histogram({
+  name: 'aula_request_time_seconds',
+  help: 'Tempo de resposta da API',
+  buckets: [0.1, 5, 15, 50, 100, 500]
+});
+
+
+
+const summary = new promClient.Summary({
+  name: 'aula_request_time_seconds_summary',
+  help: 'Tempo de resposta da API',
+  percentiles: [0.5, 0.9, 0.99]
+});
+
+// A cada vez que tiver uma requisição na página, as metricas do promethes
+// também serão executadas.
 
 app.get('/', function(req,res){
-    counter.labels("GET", "200").inc();
-    gauge.set(100 * Math.random())
-    res.send("Hello Word")
+    
+    counter.labels("200").inc();
+    counter.labels("300").inc();
+    gauge.set(100*Math.random());
+    const responseTime = Math.random();
+    histogram.observe(responseTime);
+    summary.observe(responseTime);
+
+    res.send("Hello Word");
 });
 
 // create route
@@ -32,7 +52,7 @@ app.get('/metrics', async function(req, res) {
 
     res.set("Content-Type", client.register.contentType);
     res.end(await client.register.metrics());
-})
+});
 
 
 app.listen(3000);
