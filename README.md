@@ -49,3 +49,13 @@ Observability using Prometheus and Grafana.
 PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada para montar query com as métricas que foram coletadas.    
 
 #### Tipo de dados no Prometheus:  
+
+* Scalar
+* Instant Vector
+* Range Vector   
+
+Scalar, são números inteiros. O Vector é um vetor com séries temporais. Quando fazermos uma query, são retornadas séries temporais.   
+
+Instant Vector, é o timestamp, o tempo que está atrelado a busca. Toda busca está atrelada a um timestamp.  
+
+Range Vector, é o intervalo de coleta determinado por uma faixa de tempo, podendo ser definido entre segundo, minutos ...
