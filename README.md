@@ -4,7 +4,9 @@ Observability using Prometheus and Grafana.
 * Executar pela linha de comando para baixar e executar o Prometheus via Docker.  
 
 ```docker
- docker run --name prometheus --rm -d -p 9090:9090 -v c:/Users/AS/workspace/observability-grafana-prometheus/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+ docker run --name prometheus --rm -d -p 9090:9090 \
+ -v c:/Users/AS workspace/observability-grafana-prometheus/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  \
+ prom/prometheus
 
 ```  
 
@@ -30,3 +32,20 @@ Observability using Prometheus and Grafana.
 
   https://github.com/siimon/prom-client
 
+
+***
+
+### Coletar métricas de hardware com Prometheus  
+
+* Para coletar esse tipo de métricas, precisamos utilizar os exporters do Prometheus:  
+
+    Documentação:  
+     https://prometheus.io/docs/instrumenting/exporters/   
+
+    https://github.com/prometheus   
+
+### PromQL   
+
+PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada para montar query com as métricas que foram coletadas.    
+
+#### Tipo de dados no Prometheus:  
