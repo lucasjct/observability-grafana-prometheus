@@ -60,7 +60,6 @@ PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada p
 
 #### Filtragem por Labels     
 
-<<<<<<< HEAD
 ```docker
 * aula_request_total{statusCode = "300"}   
 * aula_request_total{statusCode !="300"}    
@@ -86,7 +85,5 @@ obs: para conseguir construir um gráfico, a queria precisa retornar um Istant V
 ![exemple](images/exemple-query-.png)    
 
 
-#### Trabalhando com Histogramas 
-=======
-Range Vector, é o intervalo de coleta determinado por uma faixa de tempo, podendo ser definido entre segundo, minutos ...
->>>>>>> 16bb0ff7f89b7d6e31342a9d9bb6b9b55f2674e4
+#### Trabalhando com Histogramas   
+
