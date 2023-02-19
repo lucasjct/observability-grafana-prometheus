@@ -52,10 +52,37 @@ PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada p
 
 * Scalar
 * Instant Vector
-* Range Vector   
+* Range Vector    
 
-Scalar, são números inteiros. O Vector é um vetor com séries temporais. Quando fazermos uma query, são retornadas séries temporais.   
+* Scalar, são números inteiros. O Vector é um vetor com séries temporais. Quando fazermos uma query, são retornadas séries temporais.   
+* Instant Vector, é o timestamp, o tempo que está atrelado a busca. Toda busca está atrelada a um timestamp.  Exemplo de consulta: `aula_request_total`.  
+* Range Vector, é o intervalo de coleta determinado por uma faixa de tempo, podendo ser definido entre segundo, minutos ... Exemplo de consulta: `aula_request_total[1m]`.  
 
-Instant Vector, é o timestamp, o tempo que está atrelado a busca. Toda busca está atrelada a um timestamp.  
+#### Filtragem por Labels     
 
-Range Vector, é o intervalo de coleta determinado por uma faixa de tempo, podendo ser definido entre segundo, minutos ...
+```docker
+* aula_request_total{statusCode = "300"}   
+* aula_request_total{statusCode !="300"}    
+* aula_request_total{instance="192.168.0.26:3000", job="aula", statusCode="200"}   
+* aula_request_total{job="aula",statusCode=~"200|500"}
+```
+
+#### Trabalhando com Counters   (Exemplos com funções rate e increase)
+
+Documentação das funções do Prometheus:   
+https://prometheus.io/docs/prometheus/latest/querying/functions/  
+
+* Simulando a taxa média por segundo dos últimos 5 minutos  
+  `rate(http_requests_total{job="api-server"}[5m])`   
+* Simulando a média por minuto  
+  `rate(aula_request_total[1m])`   
+
+* Simulando o crescimento por minuto  
+  `increase(aula_requests_total[1m])`
+
+obs: para conseguir construir um gráfico, a queria precisa retornar um Istant Vector.   
+
+![exemple](images/exemple-query-.png)    
+
+
+#### Trabalhando com Histogramas 
