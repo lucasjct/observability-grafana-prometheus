@@ -85,5 +85,21 @@ obs: para conseguir construir um gráfico, a queria precisa retornar um Istant V
 ![exemple](images/exemple-query-.png)    
 
 
-#### Trabalhando com Histogramas   
+#### Trabalhando com Histogramas    
+Documentação:  https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile
+
+* Exemplo de consulta. Analisar tempo de requisição de 90% das requisições por segundo no intervalo dos últimos 5 minutos.
+   `histogram_quantile(0.9,(rate(aula_request_time_seconds_bucket[5m])))`    
+
+* Exemplo de quantidade de requisições com 300 ms no último 1 minuto.  
+  `increase(aula_request_time_seconds_bucket[le="0.3"][1m])`   
+
+* Percentual de requisições que levaram até 300ms 
+  `sum(increase(aula_request_time_seconds_bucket[le="0.3"][1m]))/sum(increase(aula_request_time_seconds_count[1m]))`      
+* Percentual de requisições que levaram até 300ms numa escala de zero a 100:  
+    `100*sum(increase(aula_request_time_seconds_bucket[le="0.3"][1m]))/sum(increase(aula_request_time_seconds_count[1m]))`   
+
+* Porcentual total de requisições duraram mais de 300 ms   
+    `100 * (1 -(sum(increase(aula_request_time_seconds_bucket[le="0.3"][1m]))/sum(increase(aula_request_time_seconds_count[1m]))))`  
+
 
