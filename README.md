@@ -103,3 +103,10 @@ Documentação:  https://prometheus.io/docs/prometheus/latest/querying/functions
     `100 * (1 -(sum(increase(aula_request_time_seconds_bucket[le="0.3"][1m]))/sum(increase(aula_request_time_seconds_count[1m]))))`  
 
 
+#### Operadores de agregação  
+
+O `sum()` é o principal operador de agregação utilizado. Exemplos:   
+
+  * `sum(aula_request_total)`   
+  * `sum(aula_request_total) by(statusCode)`   
+  * `sum(aula_request_total) by(job)`  
