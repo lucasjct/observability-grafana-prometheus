@@ -1,5 +1,9 @@
 # observability-grafana-prometheus
-Observability using Prometheus and Grafana.   
+Observability using Prometheus and Grafana.     
+
+### Overview do Prometheus   
+
+https://prometheus.io/docs/tutorials/getting_started/
 
 * Executar pela linha de comando para baixar e executar o Prometheus via Docker.  
 
@@ -7,7 +11,6 @@ Observability using Prometheus and Grafana.
  docker run --name prometheus --rm -d -p 9090:9090 \
  -v c:/Users/AS workspace/observability-grafana-prometheus/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  \
  prom/prometheus
-
 ```  
 
 * Conferir se o container está sendo executado corretamente:    
@@ -44,7 +47,9 @@ Observability using Prometheus and Grafana.
 
     https://github.com/prometheus   
 ***  
-### PromQL   
+### PromQL     
+
+Documentação: https://prometheus.io/docs/prometheus/latest/querying/basics/
 
 PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada para montar query com as métricas que foram coletadas.    
 
@@ -61,42 +66,42 @@ PromQL é uma linguagem de consultas do próprio Prometheus.  Ela é utilizada p
 #### Filtragem por Labels     
 
 ```docker
-* aula_request_total{statusCode = "300"}   
-* aula_request_total{statusCode !="300"}    
-* aula_request_total{instance="192.168.0.26:3000", job="aula", statusCode="200"}   
-* aula_request_total{job="aula",statusCode=~"200|500"}
+* aula_request_total{statusCode = "300"}     
+* aula_request_total{statusCode !="300"}     
+* aula_request_total{instance="192.168.0.26:3000", job="aula", statusCode="200"}  
+* aula_request_total{job="aula",statusCode=~"200|500"}  
 ```
 
-#### Trabalhando com Counters   (Exemplos com funções rate e increase)
+#### Trabalhando com Counters   (Exemplos com funções rate e increase)   
 
 Documentação das funções do Prometheus:   
 https://prometheus.io/docs/prometheus/latest/querying/functions/  
 
 * Simulando a taxa média por segundo dos últimos 5 minutos  
-  `rate(http_requests_total{job="api-server"}[5m])`   
+  `rate(http_requests_total{job="api-server"}[5m])`     
 * Simulando a média por minuto  
-  `rate(aula_request_total[1m])`   
+  `rate(aula_request_total[1m])`    
 
 * Simulando o crescimento por minuto  
-  `increase(aula_requests_total[1m])`
+  `increase(aula_requests_total[1m])`   
 
 obs: para conseguir construir um gráfico, a queria precisa retornar um Istant Vector.   
 
-![exemple](images/exemple-query-.png)    
+![exemple](images/exemple-query-.png)      
 
 
 #### Trabalhando com Histogramas    
-Documentação:  https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile
+Documentação:  https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile    
 
-* Exemplo de consulta. Analisar tempo de requisição de 90% das requisições por segundo no intervalo dos últimos 5 minutos.
+* Exemplo de consulta. Analisar tempo de requisição de 90% das requisições por segundo no intervalo dos últimos 5 minutos.   
    `histogram_quantile(0.9,(rate(aula_request_time_seconds_bucket[5m])))`    
 
-* Exemplo de quantidade de requisições com 300 ms no último 1 minuto.  
+* Exemplo de quantidade de requisições com 300 ms no último 1 minuto.    
   `increase(aula_request_time_seconds_bucket[le="0.3"][1m])`   
 
-* Percentual de requisições que levaram até 300ms 
+* Percentual de requisições que levaram até 300ms   
   `sum(increase(aula_request_time_seconds_bucket[le="0.3"][1m]))/sum(increase(aula_request_time_seconds_count[1m]))`      
-* Percentual de requisições que levaram até 300ms numa escala de zero a 100:  
+* Percentual de requisições que levaram até 300ms numa escala de zero a 100:    
     `100*sum(increase(aula_request_time_seconds_bucket[le="0.3"][1m]))/sum(increase(aula_request_time_seconds_count[1m]))`   
 
 * Porcentual total de requisições duraram mais de 300 ms   
@@ -109,4 +114,19 @@ O `sum()` é o principal operador de agregação utilizado. Exemplos:
 
   * `sum(aula_request_total)`   
   * `sum(aula_request_total) by(statusCode)`   
-  * `sum(aula_request_total) by(job)`  
+  * `sum(aula_request_total) by(job)`     
+
+***   
+
+### Grafana  
+
+Instalação grafana via Docker:  
+
+```docker
+docker run -d --name=grafana -p 3000:3000 grafana/grafana-enterprise
+```   
+
+Para integrar o Grafana com o Prometheus, como utilizamos o container Docker, precisamos informar o IP da máquina que está executando o container para o Grafana.   
+Para isso, precisamos instalar e executar o container do Grafana. Ao abri-lo (http://localhost:3000/) e informar que o Data Source que irá 'alimentar' o Grafana é o Prometheus e, em seguida, informar o IP da máquina e a porta em que o Prometheus está sendo executado.    
+ 
+![grafana](images/data-source.png)  
