@@ -129,4 +129,37 @@ docker run -d --name=grafana -p 3000:3000 grafana/grafana-enterprise
 Para integrar o Grafana com o Prometheus, como utilizamos o container Docker, precisamos informar o IP da máquina que está executando o container para o Grafana.   
 Para isso, precisamos instalar e executar o container do Grafana. Ao abri-lo (http://localhost:3000/) e informar que o Data Source que irá 'alimentar' o Grafana é o Prometheus e, em seguida, informar o IP da máquina e a porta em que o Prometheus está sendo executado.    
  
-![grafana](images/data-source.png)  
+![grafana](images/data-source.png)    
+
+
+### Graficos   
+
+Como escolhemos o Prometheus como data source, devemos utililzar o PromQL para construir as consultas dentro do Grafana. Abaixo os exemplode gráficos e consultas utilizadas.   
+
+#### Total de requisições por minuto  
+
+![grafico1](/images/total-req-minuto.png)   
+Neste gráfico, foi utilizada a seguinte consulta:   
+
+`sum(rate(aula_requests_total[1m]))*60`  
+
+O operador `sum()` somara todas as requisições que estão agregadas dentro de `rate()` que calcula a média por segundo dentro de um intervalor de tempo. No caso, foi selecionado `[1m]`. Por fim, a multiplicação por `60` é para transformar o intervalo do minutos de decimal para números inteiros.    
+
+
+### Tempo das requisições  
+
+![grafico2](/images/temp-req.png)  
+
+Para calcular o tempo das requsições, foram usadas as consultas:  
+
+1. `histogram_quantile(0.99, sum by(le) (rate(aula_request_duration_seconds_bucket[1m])))`   
+
+2. `histogram_quantile(0.95, sum by(le) (rate(aula_request_duration_seconds_bucket[1m])))`   
+
+3. `histogram_quantile(0.90, sum by(le) (rate(aula_request_duration_seconds_bucket[1m])))`  
+
+O tipo de gráfico foi o Histograma. Nele temos configurados alguns buckets que são definidos para registrar e contabilizar um conjunto de requisição. Em `histogram_quantile(0.99 ...)` estamos chamando o bucket que registra o comportamento de 99% das requisições que, por sua vez, são agregadas por `rate` que define um média por segundo detro do invervalo que foi definido de 1 minuto.
+
+
+
+
