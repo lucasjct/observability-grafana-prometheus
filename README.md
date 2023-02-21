@@ -136,7 +136,7 @@ Para isso, precisamos instalar e executar o container do Grafana. Ao abri-lo (ht
 
 Como escolhemos o Prometheus como data source, devemos utililzar o PromQL para construir as consultas dentro do Grafana. Abaixo os exemplode gráficos e consultas utilizadas.   
 
-#### Total de requisições por minuto  
+#### Total de requisições por minuto  (Tipo de visualização: time series)
 
 ![grafico1](/images/total-req-minuto.png)   
 Neste gráfico, foi utilizada a seguinte consulta:   
@@ -146,7 +146,7 @@ Neste gráfico, foi utilizada a seguinte consulta:
 O operador `sum()` somara todas as requisições que estão agregadas dentro de `rate()` que calcula a média por segundo dentro de um intervalor de tempo. No caso, foi selecionado `[1m]`. Por fim, a multiplicação por `60` é para transformar o intervalo do minutos de decimal para números inteiros.    
 
 
-### Tempo das requisições  
+### Tempo das requisições (Tipo de visualização: time series)
 
 ![grafico2](/images/temp-req.png)  
 
@@ -156,10 +156,32 @@ Para calcular o tempo das requsições, foram usadas as consultas:
 
 2. `histogram_quantile(0.95, sum by(le) (rate(aula_request_duration_seconds_bucket[1m])))`   
 
-3. `histogram_quantile(0.90, sum by(le) (rate(aula_request_duration_seconds_bucket[1m])))`  
+3. `histogram_quantile(0.90, sum by(le) (rate(aula_request_duration_seconds_bucket[1m])))`    
 
-O tipo de gráfico foi o Histograma. Nele temos configurados alguns buckets que são definidos para registrar e contabilizar um conjunto de requisição. Em `histogram_quantile(0.99 ...)` estamos chamando o bucket que registra o comportamento de 99% das requisições que, por sua vez, são agregadas por `rate` que define um média por segundo detro do invervalo que foi definido de 1 minuto.
+O tipo de gráfico foi o Histograma. Nele temos configurados alguns buckets que são definidos para registrar e contabilizar o tempo médio de um conjunto de requisições. Em `histogram_quantile(0.99 ...)` estamos chamando o bucket que registra o comportamento de 99% das requisições que, por sua vez, são agregadas por `rate` que define a média por segundo detro do invervalo que foi definido de 1 minuto.  
+Nos pontos 2 e 3, é a mesma coisa, porém e contabilizada a duração de requisições de outros buckets, respectivamente o de 95% e 90% das requisições.  
+
+### Total de usuários logados  (Tipo de visualização: Gauge) 
+![grafico3](images/usuarios-logados.png)   
+Este gráfico utiliza um Counter para somar os usuário logados. Para atender o valor, basta utilizar o nome da métrica definida.  
+
+`aula_usuarios_logados_total`  
+
+E configurar para que o valor apresentado seja __instant__ ao ivnés da média (avarage).   
+ 
+### Taxa de erros - status code 500 (Tipo de visualização: time series)    
+![grafico 4](images/taxa-erro.png) 
+Para visualizarmos todas as requisições e suas taxas de erros, precisamos da seguinte consulta:  
+
+`sum(rate(aula_requests_total{statusCode="500"}[1m])) / sum(rate(aula_requests_total[1m]))`   
+
+Neste exemplo, somamos (`sum()`) a quantidade total da média de requisições por segundo (`rate()`) passando como label as que possuem `statusCode="500"` dentro do intervalo de 1 minuto. Para obtermos a porcentagem correta, tivemos que dividir o valor da operação acima pela soma total da média de requisições dentro do mesmo inteverlo, 1 minuto.    
 
 
+### Número total de requisições por período (Tipo de visualização: stat) 
 
+![gráfico-5](images/numero-total-req.png)   
 
+`sum(increase(aula_requests_total[$__range]))`   
+
+Para obter o número total de requisições no instante correto que podemos definir no Grafana, utilizamos o `sum()` para somarmos o aumento dentro da série temporal que traz o número de requisições total. Para obter o valor da soma do aumento, utilizamos o `increase()` para ajustarmos com o número exato do range selecionado no grafana, precisamos passar no intervalo da query, a variável `[$_range]`. Ela é dinâmica e armazerá o valor defindo para o gráfico na interação com o Grafana.
