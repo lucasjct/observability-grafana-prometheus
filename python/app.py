@@ -11,6 +11,7 @@ _INF = float('inf')
 graphs = {}
 graphs['c'] = Counter('python_requests_total', 'Total number for requests')
 graphs['h'] = Histogram('python_requests_durantion', 'The latency time for request', buckets=(1,2,5,6,10, _INF))
+graphs['g'] = Gauge('python_users_logged', 'Total number for users online')
 
 
 @app.route('/')
@@ -21,6 +22,7 @@ def hello():
     time.sleep(0.600)
     end = time.time()
     graphs['h'].observe(end - start)
+    graphs['g'].inc()
     return "<h1>Hello Guys</h1>"
 
 

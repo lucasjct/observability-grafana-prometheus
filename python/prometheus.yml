@@ -11,7 +11,7 @@ scrape_configs:
   static_configs:
   - targets:
     - localhost:9090  
-- job_name: aula
+- job_name: python
   honor_timestamps: true
   scrape_interval: 15s
   scrape_timeout: 10s
@@ -20,4 +20,7 @@ scrape_configs:
   follow_redirects: true
   static_configs:
   - targets:
-    - docker.for.mac.localhost:5000
+    - docker.for.mac.localhost:5000  
+    
+    # below, case there is questions about target of application (network, IP, services), consult the link: 
+    # https://stackoverflow.com/questions/10523879/how-to-make-flask-keep-ajax-http-connection-alive
