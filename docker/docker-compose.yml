@@ -4,11 +4,12 @@ volumes:
   grafana-storage:
   prometheus:   
 services:
-  web:
-    build: ../python
-    ports:
-      - "5000:5000"
 
+  web:
+    build: ../python-app
+    ports:
+      - 5000:5000
+      
   prometheus: 
     image: prom/prometheus  
     command: ["--config.file=/prometheus-data/prometheus.yml"]
